@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEY SillageArchitect</title>
+<meta name="description" content="Laboratorium formula parfum DIY dengan penyimpanan lokal dan backup ke Drive.">
+<script>try{var s=JSON.parse(localStorage.getItem('dey_sillage_v2')||'{}').settings||{};document.documentElement.dataset.theme=s.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){document.documentElement.dataset.theme='light'}</script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="mono">DEY</div>
+      <div><strong>SillageArchitect</strong><small>Leave your trace.</small></div>
+    </div>
+    <nav id="nav">
+      <button data-tab="lab" class="on">Laboratorium</button>
+      <button data-tab="lib">Pustaka <span id="count" class="count">0</span></button>
+      <button data-tab="academy">Akademi</button>
+      <button data-tab="backup">Cadangan</button>
+    </nav>
+    <div class="side-foot">
+      <div id="store-state" class="state"></div>
+      <button id="theme" class="ghost">Ganti tema</button>
+    </div>
+  </aside>
+
+  <main>
+    <div id="banner" class="banner" hidden></div>
+
+    <section id="tab-lab" class="tab on">
+      <header class="head"><h1 id="lab-title">Desain formula</h1><p>Susun distribusi massa dengan presisi 0,001 g.</p></header>
+      <div class="lab">
+        <div class="panel form">
+          <label>Nama formula<input id="in-name" placeholder="Contoh: DEY Signature 01"></label>
+          <div class="row2">
+            <label>Jumlah bibit (gram)<input id="in-weight" type="number" step="0.001" min="0" value="10.000"></label>
+            <label>HPP bibit per gram (Rp)<input id="in-cost" type="number" min="0" value="8500"></label>
+          </div>
+          <div class="field"><span class="lbl">Kategori</span><div id="tag-form" class="tags"></div></div>
+          <label>Profil aroma<textarea id="in-desc" rows="2" placeholder="Karakter keseluruhan, misal: fougère modern yang bersih dan hangat"></textarea></label>
+          <label>Catatan observasi<textarea id="in-obs" rows="3" placeholder="Dry down, evolusi aroma, reaksi di kulit"></textarea></label>
+          <label>Link Drive foto sampel<input id="in-drive" type="url" placeholder="https://drive.google.com/..."></label>
+        </div>
+        <div class="panel arch">
+          <div id="tiers"></div>
+          <div class="sum">
+            <div><small>Total rasio</small><b id="sum-total">100%</b></div>
+            <div><small>Estimasi HPP</small><b id="sum-cost">Rp 85.000</b></div>
+          </div>
+          <p id="sum-msg" class="msg"></p>
+          <div class="actions">
+            <button id="btn-save" class="primary">Simpan resep</button>
+            <button id="btn-balance">Seimbangkan ke 100%</button>
+            <button id="btn-reset" class="ghost">Formula baru</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-lib" class="tab">
+      <header class="head"><h1>Pustaka resep</h1><p>Semua resep tersimpan di perangkat ini. Unduh per resep atau cadangkan sekaligus.</p></header>
+      <div class="tools">
+        <input id="search" type="search" placeholder="Cari nama atau catatan">
+        <div id="tag-filter" class="tags"></div>
+      </div>
+      <div id="grid" class="grid"></div>
+    </section>
+
+    <section id="tab-academy" class="tab">
+      <header class="head"><h1>Akademi DEY</h1><p>Panduan dasar DIY perfumery: alat, bahan, dilusi, dan penyusunan formula.</p></header>
+      <div class="acc">
+        <details open><summary>Peralatan laboratorium</summary>
+          <ul>
+            <li><b>Timbangan digital 0,001 g.</b> Wajib. Seluruh perhitungan di aplikasi ini berbasis massa.</li>
+            <li><b>Scent strip.</b> Media evaluasi aroma dan pemantauan dry down.</li>
+            <li><b>Botol sampel 10 ml dan label.</b> Beri label seketika. Botol tanpa identitas membuat eksperimen tidak bisa diulang.</li>
+            <li><b>Pipet sekali pakai.</b> Satu pipet untuk satu bahan. Pipet yang dicuci ulang menyebabkan kontaminasi silang dan merusak bahan baku.</li>
+          </ul></details>
+        <details><summary>Bahan baku untuk pemula</summary>
+          <ul>
+            <li><b>Top:</b> Sweet orange atau lemon EO (mudah dan cerah), Bergamot FCF (aman untuk kulit, tidak fototoksik), Cis-3-Hexenol (aroma rumput, dosis sangat rendah).</li>
+            <li><b>Heart:</b> Lavender EO (fougère klasik), Hedione (memperluas difusi), Ethyl Maltol (gula kapas, gourmand).</li>
+            <li><b>Base:</b> Labdanum dan Benzoin (amber accord), Patchouli EO, Ambroxan (modern dan bersih), Iso E Super (lapisan hangat).</li>
+          </ul></details>
+        <details><summary>Dilusi dan evaluasi</summary>
+          <ul>
+            <li><b>Dilusi 10%:</b> tara timbangan, masukkan 0,5 g bahan, tambah 4,5 g perfumer's alcohol. Total 5,0 g. Beri label.</li>
+            <li><b>Dilusi 1%:</b> ambil 0,5 g larutan 10%, tambah 4,5 g alcohol. Gunakan untuk bahan yang sangat dominan, misalnya Cis-3-Hexenol.</li>
+          </ul></details>
+        <details><summary>Blending dan formulasi</summary>
+          <ul>
+            <li><b>Uji biner:</b> padukan dua strip. Jika serasi, campur fisik 0,5 g + 0,5 g. Jika A menelan B, turunkan A ke dilusi 1%.</li>
+            <li><b>Accord:</b> realistis meniru objek nyata (Ethyl Maltol + Vanillin menjadi cotton candy); abstrak membentuk karakter baru.</li>
+            <li><b>Tiga lapis:</b> top 5–15 menit, heart 2–4 jam, base 4–24 jam atau lebih.</li>
+            <li><b>Evaluasi waktu:</b> cek strip pada jam ke-1, ke-4, dan esok hari. Uji juga di kulit karena pH dan suhu tubuh mengubah aroma.</li>
+          </ul></details>
+      </div>
+    </section>
+
+    <section id="tab-backup" class="tab">
+      <header class="head"><h1>Cadangan data</h1><p>Browser bisa menghapus data saat cache dibersihkan. Simpan salinan di Drive.</p></header>
+      <div class="bk">
+        <div class="panel">
+          <h2>Status</h2>
+          <dl class="stat">
+            <div><dt>Resep tersimpan</dt><dd id="st-count">0</dd></div>
+            <div><dt>Backup terakhir</dt><dd id="st-last">Belum pernah</dd></div>
+            <div><dt>Penyimpanan permanen</dt><dd id="st-persist">Memeriksa…</dd></div>
+          </dl>
+          <div class="actions">
+            <button id="bk-export" class="primary">Unduh backup lengkap</button>
+            <button id="bk-merge">Impor & gabungkan</button>
+            <button id="bk-replace">Impor & ganti semua</button>
+            <button id="bk-csv" class="ghost">Ekspor CSV</button>
+          </div>
+          <input id="bk-file" type="file" accept=".json,application/json" hidden>
+        </div>
+        <div class="panel">
+          <h2>Folder Drive</h2>
+          <label>Link folder backup<input id="in-folder" type="url" placeholder="https://drive.google.com/drive/folders/..."></label>
+          <div class="actions">
+            <button id="dr-save">Simpan link</button>
+            <button id="dr-open" class="primary">Buka folder Drive</button>
+          </div>
+          <ol class="steps">
+            <li>Klik <b>Unduh backup lengkap</b>.</li>
+            <li>Klik <b>Buka folder Drive</b>.</li>
+            <li>Seret file <code>DEY-backup-….json</code> ke folder tersebut.</li>
+            <li>Setelah cache ter-reset, pilih <b>Impor & ganti semua</b> dan pilih file itu.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
