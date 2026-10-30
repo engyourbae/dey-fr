@@ -5,10 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DEY SillageArchitect</title>
 <meta name="description" content="Laboratorium formula parfum DIY dengan penyimpanan lokal dan backup ke Drive.">
-<script>try{var s=JSON.parse(localStorage.getItem('dey_sillage_v2')||'{}').settings||{};document.documentElement.dataset.theme=s.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){document.documentElement.dataset.theme='light'}</script>
+<script>try{var s=JSON.parse(localStorage.getItem('dey_sillage_v2')||'{}').settings||{};document.documentElement.dataset.theme=s.theme||'light'}catch(e){document.documentElement.dataset.theme='light'}</script>
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-dash" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lab" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2.2h12.4a1.5 1.5 0 0 0 1.3-2.2L14 9V3M7.5 15h9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lib" viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.2 5.2l3.8-1 3 14.6-3.8 1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-aca" viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5zM7 11.5V16c0 1.2 2.2 3 5 3s5-1.8 5-3v-4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+  <symbol id="i-bk" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.3 7.8-8 9-4.7-1.2-8-4.5-8-9V6zM8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+</svg>
 <div class="app">
   <aside class="side">
     <div class="brand">
@@ -16,125 +23,189 @@
       <div><strong>SillageArchitect</strong><small>Leave your trace.</small></div>
     </div>
     <nav id="nav">
-      <button data-tab="lab" class="on">Laboratorium</button>
-      <button data-tab="lib">Pustaka <span id="count" class="count">0</span></button>
-      <button data-tab="academy">Akademi</button>
-      <button data-tab="backup">Cadangan</button>
+      <button data-tab="dash" class="on"><svg><use href="#i-dash"/></svg><span>Ringkasan</span></button>
+      <button data-tab="lab"><svg><use href="#i-lab"/></svg><span>Laboratorium</span></button>
+      <button data-tab="lib"><svg><use href="#i-lib"/></svg><span>Pustaka</span><em id="count">0</em></button>
+      <button data-tab="academy"><svg><use href="#i-aca"/></svg><span>Akademi</span></button>
+      <button data-tab="backup"><svg><use href="#i-bk"/></svg><span>Cadangan</span></button>
     </nav>
     <div class="side-foot">
       <div id="store-state" class="state"></div>
-      <button id="theme" class="ghost">Ganti tema</button>
+      <button id="theme" class="side-btn">Ganti tema</button>
     </div>
   </aside>
 
   <main>
     <div id="banner" class="banner" hidden></div>
 
-    <section id="tab-lab" class="tab on">
-      <header class="head"><h1 id="lab-title">Desain formula</h1><p>Susun distribusi massa dengan presisi 0,001 g.</p></header>
+    <!-- RINGKASAN -->
+    <section id="tab-dash" class="tab on">
+      <header class="head"><div><h1>Ringkasan</h1><p>Gambaran seluruh resep, maserasi, dan status cadangan Anda.</p></div>
+        <button class="primary" data-newlab>Formula baru</button></header>
+      <div class="stats">
+        <div class="stat"><span>Total resep</span><b class="num" id="d-total">0</b></div>
+        <div class="stat"><span>Favorit</span><b class="num" id="d-fav">0</b></div>
+        <div class="stat"><span>Sedang maserasi</span><b class="num" id="d-mac">0</b></div>
+        <div class="stat"><span>Rata-rata HPP resep</span><b class="num" id="d-avg">Rp 0</b></div>
+      </div>
+      <div class="two">
+        <div class="panel"><h2>Sedang maserasi</h2><div id="d-maclist"></div></div>
+        <div class="panel"><h2>Resep terbaru</h2><div id="d-recent"></div></div>
+      </div>
+      <div class="panel inline"><div><h2>Status cadangan</h2><p id="d-backup" class="mute"></p></div><button data-go="backup" class="primary">Buka Cadangan</button></div>
+    </section>
+
+    <!-- LABORATORIUM -->
+    <section id="tab-lab" class="tab">
+      <header class="head"><div><h1 id="lab-title">Desain formula</h1><p>Tentukan massa, konsentrasi, dan distribusi aroma. Lembar timbang di kanan ikut berubah.</p></div>
+        <button id="btn-reset">Formula baru</button></header>
       <div class="lab">
-        <div class="panel form">
-          <label>Nama formula<input id="in-name" placeholder="Contoh: DEY Signature 01"></label>
-          <div class="row2">
-            <label>Jumlah bibit (gram)<input id="in-weight" type="number" step="0.001" min="0" value="10.000"></label>
-            <label>HPP bibit per gram (Rp)<input id="in-cost" type="number" min="0" value="8500"></label>
+        <div class="stack">
+          <div class="panel">
+            <h2><i>1</i>Identitas dan kemasan</h2>
+            <label>Nama formula<input id="in-name" placeholder="Contoh: DEY Signature 01"></label>
+            <div class="row3">
+              <label>Total massa (g)<input id="in-total" inputmode="decimal" value="50,000"></label>
+              <label>Konsentrasi bibit (%)<input id="in-conc" inputmode="decimal" value="20"></label>
+              <div class="field"><span class="lbl">Jenis</span><div id="presets" class="tags"></div></div>
+            </div>
+            <div class="row2">
+              <label>HPP bibit per gram (Rp)<input id="in-coil" class="money" inputmode="numeric" value="8.500"></label>
+              <label>HPP alkohol per gram (Rp)<input id="in-calc" class="money" inputmode="numeric" value="0"></label>
+            </div>
+            <div class="field"><span class="lbl">Kategori</span><div id="tag-form" class="tags"></div></div>
           </div>
-          <div class="field"><span class="lbl">Kategori</span><div id="tag-form" class="tags"></div></div>
-          <label>Profil aroma<textarea id="in-desc" rows="2" placeholder="Karakter keseluruhan, misal: fougère modern yang bersih dan hangat"></textarea></label>
-          <label>Catatan observasi<textarea id="in-obs" rows="3" placeholder="Dry down, evolusi aroma, reaksi di kulit"></textarea></label>
-          <label>Link Drive foto sampel<input id="in-drive" type="url" placeholder="https://drive.google.com/..."></label>
+          <div class="panel">
+            <h2><i>2</i>Arsitektur aroma</h2>
+            <div id="tiers"></div>
+            <div class="ratio-foot"><span id="ratio-total">Total 100%</span><button id="btn-balance" class="small">Seimbangkan ke 100%</button></div>
+            <p id="sum-msg" class="msg"></p>
+          </div>
+          <div class="panel">
+            <h2><i>3</i>Catatan dan pelacakan</h2>
+            <label>Profil aroma<textarea id="in-desc" rows="2" placeholder="Karakter keseluruhan, misal: fougère modern yang bersih dan hangat"></textarea></label>
+            <label>Catatan observasi<textarea id="in-obs" rows="3" placeholder="Dry down, evolusi aroma, reaksi di kulit"></textarea></label>
+            <div class="row3">
+              <label>Status<select id="in-status"></select></label>
+              <label>Mulai maserasi<input id="in-start" type="date"></label>
+              <label>Lama maserasi (minggu)<input id="in-weeks" type="number" min="1" max="24" value="4"></label>
+            </div>
+            <p id="ready-info" class="mute"></p>
+            <div class="field"><span class="lbl">Penilaian</span><div id="rating" class="stars"></div></div>
+            <label>Link Drive foto sampel<input id="in-drive" type="url" placeholder="https://drive.google.com/..."></label>
+          </div>
         </div>
-        <div class="panel arch">
-          <div id="tiers"></div>
-          <div class="sum">
-            <div><small>Total rasio</small><b id="sum-total">100%</b></div>
-            <div><small>Estimasi HPP</small><b id="sum-cost">Rp 85.000</b></div>
-          </div>
-          <p id="sum-msg" class="msg"></p>
-          <div class="actions">
-            <button id="btn-save" class="primary">Simpan resep</button>
-            <button id="btn-balance">Seimbangkan ke 100%</button>
-            <button id="btn-reset" class="ghost">Formula baru</button>
-          </div>
-        </div>
+        <aside class="sheet panel">
+          <h2>Lembar timbang</h2>
+          <div class="big"><div><small>Bibit</small><b id="sum-oil">0,000</b><u>g</u></div><div><small>Alkohol</small><b id="sum-alc">0,000</b><u>g</u></div></div>
+          <table class="tbl"><tbody id="sheet"></tbody></table>
+          <dl class="kv">
+            <div><dt>Total massa</dt><dd id="sum-total">0,000 g</dd></div>
+            <div><dt>HPP bibit</dt><dd id="sum-coil">Rp 0</dd></div>
+            <div><dt>HPP alkohol</dt><dd id="sum-calc">Rp 0</dd></div>
+            <div class="tot"><dt>Estimasi HPP</dt><dd id="sum-cost">Rp 0</dd></div>
+            <div><dt>HPP per gram jadi</dt><dd id="sum-cpg">Rp 0</dd></div>
+          </dl>
+          <button id="btn-save" class="primary wide">Simpan resep</button>
+          <p class="hint">Pintasan: Ctrl/Cmd + S</p>
+        </aside>
       </div>
     </section>
 
+    <!-- PUSTAKA -->
     <section id="tab-lib" class="tab">
-      <header class="head"><h1>Pustaka resep</h1><p>Semua resep tersimpan di perangkat ini. Unduh per resep atau cadangkan sekaligus.</p></header>
+      <header class="head"><div><h1>Pustaka resep</h1><p>Semua resep tersimpan di perangkat ini. Unduh per resep atau cadangkan sekaligus.</p></div>
+        <button class="primary" data-newlab>Formula baru</button></header>
       <div class="tools">
-        <input id="search" type="search" placeholder="Cari nama atau catatan">
+        <div class="row-tools"><input id="search" type="search" placeholder="Cari nama, profil, atau catatan"><select id="sort"></select></div>
+        <div id="status-filter" class="tags"></div>
         <div id="tag-filter" class="tags"></div>
       </div>
       <div id="grid" class="grid"></div>
     </section>
 
+    <!-- AKADEMI -->
     <section id="tab-academy" class="tab">
-      <header class="head"><h1>Akademi DEY</h1><p>Panduan dasar DIY perfumery: alat, bahan, dilusi, dan penyusunan formula.</p></header>
+      <header class="head"><div><h1>Akademi DEY</h1><p>Panduan dasar DIY perfumery: alat, bahan, dilusi, dan penyusunan formula.</p></div></header>
       <div class="acc">
         <details open><summary>Peralatan laboratorium</summary>
           <ul>
             <li><b>Timbangan digital 0,001 g.</b> Wajib. Seluruh perhitungan di aplikasi ini berbasis massa.</li>
             <li><b>Scent strip.</b> Media evaluasi aroma dan pemantauan dry down.</li>
             <li><b>Botol sampel 10 ml dan label.</b> Beri label seketika. Botol tanpa identitas membuat eksperimen tidak bisa diulang.</li>
-            <li><b>Pipet sekali pakai.</b> Satu pipet untuk satu bahan. Pipet yang dicuci ulang menyebabkan kontaminasi silang dan merusak bahan baku.</li>
+            <li><b>Pipet sekali pakai.</b> Satu pipet untuk satu bahan. Pipet yang dicuci ulang menyebabkan kontaminasi silang.</li>
           </ul></details>
         <details><summary>Bahan baku untuk pemula</summary>
           <ul>
-            <li><b>Top:</b> Sweet orange atau lemon EO (mudah dan cerah), Bergamot FCF (aman untuk kulit, tidak fototoksik), Cis-3-Hexenol (aroma rumput, dosis sangat rendah).</li>
-            <li><b>Heart:</b> Lavender EO (fougère klasik), Hedione (memperluas difusi), Ethyl Maltol (gula kapas, gourmand).</li>
-            <li><b>Base:</b> Labdanum dan Benzoin (amber accord), Patchouli EO, Ambroxan (modern dan bersih), Iso E Super (lapisan hangat).</li>
+            <li><b>Top:</b> sweet orange atau lemon EO, Bergamot FCF (aman untuk kulit), Cis-3-Hexenol (aroma rumput, dosis sangat rendah).</li>
+            <li><b>Heart:</b> Lavender EO, Hedione (memperluas difusi), Ethyl Maltol (gourmand).</li>
+            <li><b>Base:</b> Labdanum dan Benzoin (amber accord), Patchouli EO, Ambroxan, Iso E Super.</li>
+          </ul></details>
+        <details><summary>Konsentrasi bibit</summary>
+          <ul>
+            <li><b>EDC</b> sekitar 3–5%, <b>EDT</b> 5–15%, <b>EDP</b> 15–20%, <b>Parfum</b> 20–30%. Angka di Laboratorium dapat Anda ubah bebas.</li>
+            <li>Semua takaran dihitung dari massa: bibit = total massa × konsentrasi, sisanya alkohol.</li>
           </ul></details>
         <details><summary>Dilusi dan evaluasi</summary>
           <ul>
             <li><b>Dilusi 10%:</b> tara timbangan, masukkan 0,5 g bahan, tambah 4,5 g perfumer's alcohol. Total 5,0 g. Beri label.</li>
-            <li><b>Dilusi 1%:</b> ambil 0,5 g larutan 10%, tambah 4,5 g alcohol. Gunakan untuk bahan yang sangat dominan, misalnya Cis-3-Hexenol.</li>
+            <li><b>Dilusi 1%:</b> ambil 0,5 g larutan 10%, tambah 4,5 g alcohol, untuk bahan yang sangat dominan.</li>
           </ul></details>
-        <details><summary>Blending dan formulasi</summary>
+        <details><summary>Blending dan maserasi</summary>
           <ul>
             <li><b>Uji biner:</b> padukan dua strip. Jika serasi, campur fisik 0,5 g + 0,5 g. Jika A menelan B, turunkan A ke dilusi 1%.</li>
-            <li><b>Accord:</b> realistis meniru objek nyata (Ethyl Maltol + Vanillin menjadi cotton candy); abstrak membentuk karakter baru.</li>
             <li><b>Tiga lapis:</b> top 5–15 menit, heart 2–4 jam, base 4–24 jam atau lebih.</li>
-            <li><b>Evaluasi waktu:</b> cek strip pada jam ke-1, ke-4, dan esok hari. Uji juga di kulit karena pH dan suhu tubuh mengubah aroma.</li>
+            <li><b>Maserasi:</b> diamkan di tempat gelap dan sejuk beberapa minggu, lalu evaluasi pada jam ke-1, ke-4, dan esok hari. Uji di kulit karena pH dan suhu tubuh mengubah aroma.</li>
           </ul></details>
       </div>
     </section>
 
+    <!-- CADANGAN -->
     <section id="tab-backup" class="tab">
-      <header class="head"><h1>Cadangan data</h1><p>Browser bisa menghapus data saat cache dibersihkan. Simpan salinan di Drive.</p></header>
-      <div class="bk">
+      <header class="head"><div><h1>Cadangan data</h1><p>Browser bisa menghapus data saat cache dibersihkan. Simpan salinan di Drive.</p></div></header>
+      <div class="two">
         <div class="panel">
           <h2>Status</h2>
-          <dl class="stat">
+          <dl class="kv">
             <div><dt>Resep tersimpan</dt><dd id="st-count">0</dd></div>
             <div><dt>Backup terakhir</dt><dd id="st-last">Belum pernah</dd></div>
             <div><dt>Penyimpanan permanen</dt><dd id="st-persist">Memeriksa…</dd></div>
           </dl>
           <div class="actions">
             <button id="bk-export" class="primary">Unduh backup lengkap</button>
-            <button id="bk-merge">Impor & gabungkan</button>
-            <button id="bk-replace">Impor & ganti semua</button>
-            <button id="bk-csv" class="ghost">Ekspor CSV</button>
+            <button id="bk-merge">Impor dan gabungkan</button>
+            <button id="bk-replace">Impor dan ganti semua</button>
+            <button id="bk-csv">Ekspor CSV</button>
           </div>
           <input id="bk-file" type="file" accept=".json,application/json" hidden>
+          <h3>Riwayat backup</h3>
+          <ul id="history" class="hist"></ul>
         </div>
-        <div class="panel">
-          <h2>Folder Drive</h2>
-          <label>Link folder backup<input id="in-folder" type="url" placeholder="https://drive.google.com/drive/folders/..."></label>
-          <div class="actions">
-            <button id="dr-save">Simpan link</button>
-            <button id="dr-open" class="primary">Buka folder Drive</button>
+        <div class="stack">
+          <div class="panel">
+            <h2>Folder Drive</h2>
+            <label>Link folder backup<input id="in-folder" type="url" placeholder="https://drive.google.com/drive/folders/..."></label>
+            <div class="actions"><button id="dr-save">Simpan link</button><button id="dr-open" class="primary">Buka folder Drive</button></div>
+            <ol class="steps">
+              <li>Klik <b>Unduh backup lengkap</b>.</li>
+              <li>Klik <b>Buka folder Drive</b>.</li>
+              <li>Seret file <code>DEY-backup-….json</code> ke folder tersebut.</li>
+              <li>Setelah cache ter-reset, pilih <b>Impor dan ganti semua</b> lalu pilih file itu.</li>
+            </ol>
           </div>
-          <ol class="steps">
-            <li>Klik <b>Unduh backup lengkap</b>.</li>
-            <li>Klik <b>Buka folder Drive</b>.</li>
-            <li>Seret file <code>DEY-backup-….json</code> ke folder tersebut.</li>
-            <li>Setelah cache ter-reset, pilih <b>Impor & ganti semua</b> dan pilih file itu.</li>
-          </ol>
+          <div class="panel danger">
+            <h2>Zona hati-hati</h2>
+            <p class="mute">Menghapus seluruh resep dan pengaturan di browser ini. Unduh backup lebih dulu.</p>
+            <button id="bk-wipe" class="warn">Hapus semua data</button>
+          </div>
         </div>
       </div>
     </section>
   </main>
+</div>
+
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="m-title"><button class="x" data-close aria-label="Tutup">×</button><div id="m-body"></div></div>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script src="assets/js/store.js"></script>
